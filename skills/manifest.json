@@ -1,5 +1,6 @@
 {
   "skills": [
+    {"name": "hm-orchestrator", "path": "skills/hm-orchestrator/SKILL.md"},
     {"name": "hm-hypothesis-builder", "path": "skills/hm-hypothesis-builder/SKILL.md"},
     {"name": "hm-goal-metrics", "path": "skills/hm-goal-metrics/SKILL.md"},
     {"name": "hm-subject-motivation", "path": "skills/hm-subject-motivation/SKILL.md"},

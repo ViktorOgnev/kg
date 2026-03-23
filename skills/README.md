@@ -11,10 +11,12 @@
 - hm-topology-advisor — рекомендации по топологиям представления (доп.)
 - hm-prioritization — приоритизация и приоритетный путь (доп.)
 - hm-json-export — экспорт в JSON/YAML (Strategy as Code) (доп.)
+ - hm-orchestrator — пошаговый фасилитатор: ведёт от цели до визуализации, хранит состояние, генерирует Mermaid
 
 Общие материалы
 - shared/references/hypothesismapping-terms.md — краткие термины/напоминания
 - shared/references/common-checklists.md — мини‑чеклисты
+ - shared/references/mermaid-style.md — принципы оформления Mermaid для HM
 
 Как использовать локально
 1) Положите каталог `skills/` в ваш репозиторий (уже сделано).
