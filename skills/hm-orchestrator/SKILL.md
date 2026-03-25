@@ -17,6 +17,20 @@ description: Пошаговый фасилитатор «Карты гипоте
 Хранилище состояния
 - `.hm/session.json` — прогресс мастера (текущий шаг, чек‑лист и т.п.).
 - `.hm/map.json` — канонические данные карты (цель/метрики/субъекты/гипотезы/задачи/приоритеты/связи/заметки/блокеры). См. схему в `hm-json-export`.
+- `.hm/map.json` может содержать необязательный блок `topology`, управляющий Mermaid‑представлением:
+  ```json
+  {
+    "topology": {
+      "mode": "extended_lr | classic_lr",
+      "metrics": "separate_band | inline",
+      "tasks": "auto | linked | board",
+      "link_mode": "smart_tags | arrows",
+      "layout_engine": "elk | dagre",
+      "note_lane": "bottom | inline",
+      "blocker_lane": "bottom | inline"
+    }
+  }
+  ```
 - При каждом шаге: читать обе структуры; после шага — сохранять обновлённые.
 
 Шаги (сквозной сценарий)
@@ -46,10 +60,25 @@ description: Пошаговый фасилитатор «Карты гипоте
 - Итог: `.hm/map.json` + `hm/map.mmd` (если пользователь запросил визуализацию).
 
 Mermaid визуализация (fallback)
-- Использовать flowchart TB. Определить classDef под стандартные цвета «Карты гипотез»:
-  - goal/metrics: `#cadf58`, subject: `#ffc831`, neg.subject: `#ffb373`, hypothesis: `#ffef73`, task: `#a6cdff`, note: `#f1f1f1`, blocker: `#FFA391`. Связи серые `#70736D`. Приоритет окрашивать цветом стрелки (минимум: добавить классы links).
+- Использовать left-to-right топологию по мотивам `Byndyusoft/hypothesismapping`: цель слева, затем вправо — субъекты, гипотезы, задачи. В Mermaid для этого допустимо использовать `flowchart RL`, если оно даёт визуальный порядок «слева направо».
+- Дефолтный режим — `extended_lr`:
+  - goal/metrics: отдельная левая полоса, метрики по умолчанию на отдельном уровне (`metrics=separate_band`)
+  - subjects: следующий уровень, negative subjects выделять отдельным classDef
+  - hypotheses: отдельная полоса правее subject level
+  - tasks: отдельная правая полоса; если у задач есть `status`/`lane`, допускается board‑like группировка
+  - blockers/notes: выносить в нижнюю context lane по возможности
+  - layout engine по умолчанию `elk`; `dagre` допустим как fallback
+- Связи в классической causal chain:
+  - `task --> hypothesis`
+  - `hypothesis --> subject`
+  - `subject --> goal`
+  - `metric --> goal`
+- Влияние гипотез на метрики:
+  - по умолчанию `link_mode=smart_tags`: метрики упоминать в hypothesis label/tag, без полного леса стрелок
+  - `link_mode=arrows`: дополнительно рисовать `hypothesis --> metric`
+- Цвета: goal/metrics: `#cadf58`, subject: `#ffc831`, neg.subject: `#ffb373`, hypothesis: `#ffef73`, task: `#a6cdff`, note: `#f1f1f1`, blocker: `#FFA391`. Связи серые `#70736D`. Приоритет окрашивать цветом стрелки.
 - Скрипт-конвертер: `scripts/hm_map_to_mermaid.py` — читает `.hm/map.json`, пишет `hm/map.mmd`. 
-- Рекомендации по визуальному стилю см. `skills/shared/references/mermaid-style.md` (вдохновлено pretty‑mermaid‑skills).
+- Рекомендации по визуальному стилю см. `../shared/references/mermaid-style.md` (вдохновлено pretty‑mermaid‑skills).
 
 Интеграция с узкими скиллами
 - В каждом шаге при необходимости вызывать: `use_skill("hm-…")`.
